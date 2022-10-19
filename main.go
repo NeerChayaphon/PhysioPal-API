@@ -13,7 +13,7 @@ func main() {
 	configs.ConnectDB()
 
 	//routes
-	routes.UserRoute(router)
+	routes.PhysiotherapistRoute(router)
 
 	router.Run()
 }
