@@ -11,14 +11,12 @@ import (
 	"github.com/NeerChayaphon/PhysioPal-API/responses"
 	"github.com/NeerChayaphon/PhysioPal-API/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var physiotherapistCollection *mongo.Collection = configs.GetCollection(configs.DB, "physiotherapists")
-var validate = validator.New()
 
 func CreatePhysiotherapist() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -33,7 +31,7 @@ func CreatePhysiotherapist() gin.HandlerFunc {
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&physiotherapist); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&physiotherapist); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
@@ -105,7 +103,7 @@ func EditAPhysiotherapist() gin.HandlerFunc {
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&physiotherapist); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&physiotherapist); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
