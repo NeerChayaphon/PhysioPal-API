@@ -31,7 +31,7 @@ func CreatePhysiotherapist() gin.HandlerFunc {
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&physiotherapist); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&physiotherapist); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
@@ -103,7 +103,7 @@ func EditAPhysiotherapist() gin.HandlerFunc {
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&physiotherapist); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&physiotherapist); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}

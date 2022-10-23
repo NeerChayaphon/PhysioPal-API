@@ -9,6 +9,7 @@ import (
 	"github.com/NeerChayaphon/PhysioPal-API/configs"
 	"github.com/NeerChayaphon/PhysioPal-API/models"
 	"github.com/NeerChayaphon/PhysioPal-API/responses"
+	"github.com/NeerChayaphon/PhysioPal-API/utils"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -30,7 +31,7 @@ func CreateExercise() gin.HandlerFunc {
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&exercise); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&exercise); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
@@ -92,7 +93,7 @@ func EditAExercise() gin.HandlerFunc {
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&exercise); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&exercise); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}

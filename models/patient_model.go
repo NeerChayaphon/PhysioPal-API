@@ -11,5 +11,5 @@ type Patient struct {
 	Photo             string             `bson:"photo,omitempty" validate:"required"`
 	Address           string             `bson:"specialization,omitempty" `
 	CongenitalDisease []string           `bson:"congenitalDisease"`
-	ExerciseHistory   []ExerciseHistory  `bson:"exerciseHistory" validate:"required"`
+	ExerciseHistory   []ExerciseHistory  `bson:"exerciseHistory"`
 }
