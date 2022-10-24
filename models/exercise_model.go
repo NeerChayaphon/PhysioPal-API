@@ -35,3 +35,18 @@ type Steps struct {
 	ModelClass  string `bson:"modelClass,omitempty" validate:"required"`
 	Model       string `bson:"model,omitempty" validate:"required"`
 }
+
+type GeneralExercise struct {
+	Id                  primitive.ObjectID `bson:"_id" json:"_id,omitempty"`
+	Name                string             `bson:"name,omitempty" validate:"required"`
+	Description         string             `bson:"description,omitempty" validate:"required"`
+	MusculoskeltalTypes []string           `bson:"musculoskeltalTypes" validate:"required"`
+	Functional          *bool              `bson:"functional" validate:"required"`
+	ExerciseSet         []ExerciseSet      `bson:"exerciseSet" validate:"required"`
+}
+
+type ExerciseSet struct {
+	Exercise   primitive.ObjectID `bson:"exercise" json:"exercise,omitempty"`
+	TimePeriod int                `bson:"timePeriod,omitempty" validate:"required"`
+	Reps       int                `bson:"reps,omitempty" validate:"required"`
+}
