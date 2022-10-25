@@ -17,6 +17,8 @@ func main() {
 	routes.PhysiotherapistRoute(router)
 	routes.ExerciseRoute(router)
 	routes.GeneralExerciseRoute(router)
+	routes.AppointmentRoute(router)
+	routes.TelemedicineRoute(router)
 
 	router.Run()
 }
