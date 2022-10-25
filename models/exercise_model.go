@@ -50,3 +50,11 @@ type ExerciseSet struct {
 	TimePeriod int                `bson:"timePeriod,omitempty" validate:"required"`
 	Reps       int                `bson:"reps,omitempty" validate:"required"`
 }
+
+type Therapeutic struct {
+	Name        string        `bson:"name,omitempty" validate:"required"`
+	Description string        `bson:"description,omitempty" validate:"required"`
+	StartDate   time.Time     `bson:"startDate" validate:"required"`
+	EndDate     time.Time     `bson:"endDate" validate:"required"`
+	ExerciseSet []ExerciseSet `bson:"exerciseSet" validate:"required"`
+}
