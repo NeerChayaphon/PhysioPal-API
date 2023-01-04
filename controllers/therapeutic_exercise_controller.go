@@ -16,59 +16,36 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var telemedicineCollection *mongo.Collection = configs.GetCollection(configs.DB, "telemedicines")
+var therapeuticExerciseCollection *mongo.Collection = configs.GetCollection(configs.DB, "therapeuticExercises")
 
-func CreateTelemedicine() gin.HandlerFunc {
+func CreateTherapeuticExercise() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var telemedicine models.Telemedicine
+		var therapeuticExercise models.TherapeuticExercise
 		defer cancel()
 
 		//validate the request body
-		if err := c.BindJSON(&telemedicine); err != nil {
+		if err := c.BindJSON(&therapeuticExercise); err != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := utils.Validate.Struct(&telemedicine); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&therapeuticExercise); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
-		// Get Patient by ID
-		var patient models.Patient
-		err := patientCollection.FindOne(ctx, bson.M{"_id": telemedicine.Patient}).Decode(&patient)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError,
-				responses.APIResponse{
-					Status:  http.StatusInternalServerError,
-					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
-			return
+		newTherapeuticExercise := models.TherapeuticExercise{
+			Id:            primitive.NewObjectID(),
+			AppointmentId: therapeuticExercise.AppointmentId,
+			Details:       therapeuticExercise.Details,
+			StartDate:     therapeuticExercise.StartDate,
+			EndDate:       therapeuticExercise.EndDate,
+			ExerciseSet:   therapeuticExercise.ExerciseSet,
 		}
 
-		// Get Physiotherapist by ID
-		var physiotherapist models.Physiotherapist
-		err = physiotherapistCollection.FindOne(ctx, bson.M{"_id": telemedicine.Physiotherapist}).Decode(&physiotherapist)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError,
-				responses.APIResponse{
-					Status:  http.StatusInternalServerError,
-					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
-			return
-		}
-
-		newTelemedicine := models.Telemedicine{
-			Id:              primitive.NewObjectID(),
-			RoomID:          telemedicine.RoomID,
-			Patient:         telemedicine.Patient,
-			Physiotherapist: telemedicine.Physiotherapist,
-			Date:            telemedicine.Date,
-		}
-
-		result, err := telemedicineCollection.InsertOne(ctx, newTelemedicine)
+		result, err := therapeuticExerciseCollection.InsertOne(ctx, newTherapeuticExercise)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError,
 				responses.APIResponse{
@@ -82,77 +59,77 @@ func CreateTelemedicine() gin.HandlerFunc {
 	}
 }
 
-func GetATelemedicine() gin.HandlerFunc {
+func GetATherapeuticExercise() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		telemedicineId := c.Param("telemedicineId")
-		var telemedicine models.Telemedicine
+		therapeuticExerciseId := c.Param("therapeuticExerciseId")
+		var therapeuticExercise models.TherapeuticExercise
 		defer cancel()
 
-		objId, _ := primitive.ObjectIDFromHex(telemedicineId)
+		objId, _ := primitive.ObjectIDFromHex(therapeuticExerciseId)
 
-		err := telemedicineCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&telemedicine)
+		err := therapeuticExerciseCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&therapeuticExercise)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": telemedicine}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": therapeuticExercise}})
 	}
 }
 
-func EditATelemedicine() gin.HandlerFunc {
+func EditATherapeuticExercise() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		telemedicineId := c.Param("telemedicineId")
-		var telemedicine models.Telemedicine
+		therapeuticExerciseId := c.Param("therapeuticExerciseId")
+		var therapeuticExercise models.TherapeuticExercise
 		defer cancel()
 
-		objId, _ := primitive.ObjectIDFromHex(telemedicineId)
+		objId, _ := primitive.ObjectIDFromHex(therapeuticExerciseId)
 
 		//validate the request body
-		if err := c.BindJSON(&telemedicine); err != nil {
+		if err := c.BindJSON(&therapeuticExercise); err != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		//use the validator library to validate required fields
-		if validationErr := utils.Validate.Struct(&telemedicine); validationErr != nil {
+		if validationErr := utils.Validate.Struct(&therapeuticExercise); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
-		update := bson.M{"roomID": telemedicine.RoomID, "patient": telemedicine.Patient, "physiotherapist": telemedicine.Physiotherapist, "date": telemedicine.Date}
-		result, err := telemedicineCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
+		update := bson.M{"details": therapeuticExercise.Details, "startDate": therapeuticExercise.StartDate, "endDate": therapeuticExercise.EndDate, "exerciseSet": therapeuticExercise.ExerciseSet}
+		result, err := therapeuticExerciseCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//get updated telemedicine details
-		var updatedTelemedicine models.Telemedicine
+		//get updated therapeuticExercise details
+		var updatedTherapeuticExercise models.TherapeuticExercise
 		if result.MatchedCount == 1 {
-			err := telemedicineCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTelemedicine)
+			err := therapeuticExerciseCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTherapeuticExercise)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTelemedicine}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTherapeuticExercise}})
 	}
 }
 
-func DeleteATelemedicine() gin.HandlerFunc {
+func DeleteATherapeuticExercise() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		telemedicineId := c.Param("telemedicineId")
+		therapeuticExerciseId := c.Param("therapeuticExerciseId")
 		defer cancel()
 
-		objId, _ := primitive.ObjectIDFromHex(telemedicineId)
+		objId, _ := primitive.ObjectIDFromHex(therapeuticExerciseId)
 
-		result, err := telemedicineCollection.DeleteOne(ctx, bson.M{"_id": objId})
+		result, err := therapeuticExerciseCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -161,24 +138,24 @@ func DeleteATelemedicine() gin.HandlerFunc {
 
 		if result.DeletedCount < 1 {
 			c.JSON(http.StatusNotFound,
-				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Telemedicine with specified ID not found!"}},
+				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "TherapeuticExercise with specified ID not found!"}},
 			)
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Telemedicine successfully deleted!"}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "TherapeuticExercise successfully deleted!"}},
 		)
 	}
 }
 
-func GetAllTelemedicines() gin.HandlerFunc {
+func GetAllTherapeuticExercises() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var telemedicines []models.Telemedicine
+		var therapeuticExercises []models.TherapeuticExercise
 		defer cancel()
 
-		results, err := telemedicineCollection.Find(ctx, bson.M{})
+		results, err := therapeuticExerciseCollection.Find(ctx, bson.M{})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -188,16 +165,16 @@ func GetAllTelemedicines() gin.HandlerFunc {
 		//reading from the db in an optimal way
 		defer results.Close(ctx)
 		for results.Next(ctx) {
-			var singleTelemedicine models.Telemedicine
-			if err = results.Decode(&singleTelemedicine); err != nil {
+			var singleTherapeuticExercise models.TherapeuticExercise
+			if err = results.Decode(&singleTherapeuticExercise); err != nil {
 				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 
-			telemedicines = append(telemedicines, singleTelemedicine)
+			therapeuticExercises = append(therapeuticExercises, singleTherapeuticExercise)
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": telemedicines}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": therapeuticExercises}},
 		)
 	}
 }

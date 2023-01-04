@@ -19,6 +19,8 @@ func main() {
 	routes.GeneralExerciseRoute(router)
 	routes.AppointmentRoute(router)
 	routes.TelemedicineRoute(router)
+	routes.MstRoute(router)
+	routes.TherapeuticExerciseRoutes(router)
 
 	router.Run()
 }

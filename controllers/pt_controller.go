@@ -43,15 +43,11 @@ func CreatePhysiotherapist() gin.HandlerFunc {
 		}
 
 		newPhysiotherapist := models.Physiotherapist{
-			Id:             primitive.NewObjectID(),
-			Name:           physiotherapist.Name,
-			Email:          physiotherapist.Email,
-			Password:       passwordHash,
-			Phone:          physiotherapist.Phone,
-			Photo:          physiotherapist.Photo,
-			Specialization: physiotherapist.Specialization,
-			Background:     physiotherapist.Background,
-			Hospital:       physiotherapist.Hospital,
+			Id:       primitive.NewObjectID(),
+			Details:  physiotherapist.Details,
+			Password: passwordHash,
+			Phone:    physiotherapist.Phone,
+			Photo:    physiotherapist.Photo,
 		}
 
 		result, err := physiotherapistCollection.InsertOne(ctx, newPhysiotherapist)
@@ -113,7 +109,7 @@ func EditAPhysiotherapist() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"name": physiotherapist.Name, "email": physiotherapist.Email, "password": passwordHash, "phone": physiotherapist.Phone, "photo": physiotherapist.Photo, "specialization": physiotherapist.Specialization, "background": physiotherapist.Background, "hospital": physiotherapist.Hospital}
+		update := bson.M{"details": physiotherapist.Details, "password": passwordHash, "phone": physiotherapist.Phone, "photo": physiotherapist.Photo}
 		result, err := physiotherapistCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {

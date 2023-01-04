@@ -38,10 +38,9 @@ func CreateExercise() gin.HandlerFunc {
 
 		newExercise := models.Exercise{
 			Id:                  primitive.NewObjectID(),
-			Name:                exercise.Name,
-			Description:         exercise.Description,
+			Details:             exercise.Details,
 			MusculoskeltalTypes: exercise.MusculoskeltalTypes,
-			Injury:              exercise.Injury,
+			Steps:               exercise.Steps,
 		}
 
 		result, err := exerciseCollection.InsertOne(ctx, newExercise)
@@ -98,7 +97,7 @@ func EditAExercise() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"name": exercise.Name, "description": exercise.Description, "musculoskeltalTypes": exercise.MusculoskeltalTypes, "injury": exercise.Injury}
+		update := bson.M{"details": exercise.Details, "musculoskeltalTypes": exercise.MusculoskeltalTypes, "steps": exercise.Steps}
 		result, err := exerciseCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {

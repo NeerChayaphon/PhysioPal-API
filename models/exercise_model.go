@@ -21,28 +21,26 @@ type ExerciseRecorded struct {
 }
 
 type Exercise struct {
-	Id                  primitive.ObjectID `bson:"_id" json:"_id,omitempty"`
-	Name                string             `bson:"name,omitempty" validate:"required"`
-	Description         string             `bson:"description,omitempty" validate:"required"`
-	MusculoskeltalTypes []string           `bson:"musculoskeltalTypes" validate:"required"`
-	Injury              []Steps            `bson:"injury"`
+	Id                  primitive.ObjectID   `bson:"_id" json:"_id,omitempty"`
+	Details             LanguageDescription  `bson:"details,omitempty" validate:"required"`
+	MusculoskeltalTypes []primitive.ObjectID `bson:"musculoskeltalTypes" validate:"required"`
+	Steps               []Steps              `bson:"steps" validate:"required"`
 }
 
 type Steps struct {
-	Name        string `bson:"name,omitempty" validate:"required"`
-	Image       string `bson:"image,omitempty" validate:"required"`
-	Description string `bson:"description,omitempty" validate:"required"`
-	ModelClass  string `bson:"modelClass,omitempty" validate:"required"`
-	Model       string `bson:"model,omitempty" validate:"required"`
+	Image      string              `bson:"image,omitempty" validate:"required"`
+	Details    LanguageDescription `bson:"details,omitempty" validate:"required"`
+	ModelClass string              `bson:"modelClass,omitempty" validate:"required"`
+	Model      string              `bson:"model,omitempty" validate:"required"`
 }
 
 type GeneralExercise struct {
-	Id                  primitive.ObjectID `bson:"_id" json:"_id,omitempty"`
-	Name                string             `bson:"name,omitempty" validate:"required"`
-	Description         string             `bson:"description,omitempty" validate:"required"`
-	MusculoskeltalTypes []string           `bson:"musculoskeltalTypes" validate:"required"`
-	Functional          *bool              `bson:"functional" validate:"required"`
-	ExerciseSet         []ExerciseSet      `bson:"exerciseSet" validate:"required"`
+	Id                  primitive.ObjectID    `bson:"_id" json:"_id,omitempty"`
+	Details             LanguageDescription   `bson:"details,omitempty" validate:"required"`
+	MusculoskeltalTypes primitive.ObjectID    `bson:"musculoskeltalTypes" validate:"required"`
+	Functional          *bool                 `bson:"functional" validate:"required"`
+	ExerciseSet         []ExerciseSet         `bson:"exerciseSet" validate:"required"`
+	Injury              []LanguageDescription `bson:"injury"`
 }
 
 type ExerciseSet struct {
@@ -51,10 +49,11 @@ type ExerciseSet struct {
 	Reps       int                `bson:"reps,omitempty" validate:"required"`
 }
 
-type Therapeutic struct {
-	Name        string        `bson:"name,omitempty" validate:"required"`
-	Description string        `bson:"description,omitempty" validate:"required"`
-	StartDate   time.Time     `bson:"startDate" validate:"required"`
-	EndDate     time.Time     `bson:"endDate" validate:"required"`
-	ExerciseSet []ExerciseSet `bson:"exerciseSet" validate:"required"`
+type TherapeuticExercise struct {
+	Id            primitive.ObjectID  `bson:"_id" json:"_id,omitempty"`
+	AppointmentId primitive.ObjectID  `bson:"appointmentId" json:"appointmentId,omitempty"`
+	Details       LanguageDescription `bson:"details,omitempty" validate:"required"`
+	StartDate     time.Time           `bson:"startDate" validate:"required"`
+	EndDate       time.Time           `bson:"endDate" validate:"required"`
+	ExerciseSet   []ExerciseSet       `bson:"exerciseSet" validate:"required"`
 }

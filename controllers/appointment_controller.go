@@ -36,14 +36,38 @@ func CreateAppointment() gin.HandlerFunc {
 			return
 		}
 
+		// Get Patient by ID
+		var patient models.Patient
+		err := patientCollection.FindOne(ctx, bson.M{"_id": appointment.Patient}).Decode(&patient)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError,
+				responses.APIResponse{
+					Status:  http.StatusInternalServerError,
+					Message: "error",
+					Data:    map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		// Get Physiotherapist by ID
+		var physiotherapist models.Physiotherapist
+		err = physiotherapistCollection.FindOne(ctx, bson.M{"_id": appointment.Physiotherapist}).Decode(&physiotherapist)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError,
+				responses.APIResponse{
+					Status:  http.StatusInternalServerError,
+					Message: "error",
+					Data:    map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
 		newAppointment := models.Appointment{
-			Id:              primitive.NewObjectID(),
-			Patient:         appointment.Patient,
-			Physiotherapist: appointment.Physiotherapist,
-			Date:            appointment.Date,
-			Injury:          appointment.Injury,
-			Treatment:       appointment.Treatment,
-			Therapeutic:     appointment.Therapeutic,
+			Id:                  primitive.NewObjectID(),
+			Patient:             appointment.Patient,
+			Physiotherapist:     appointment.Physiotherapist,
+			Date:                appointment.Date,
+			Injury:              appointment.Injury,
+			Treatment:           appointment.Treatment,
+			TherapeuticExercise: appointment.TherapeuticExercise,
 		}
 
 		result, err := appointmentCollection.InsertOne(ctx, newAppointment)
@@ -100,7 +124,7 @@ func EditAAppointment() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"patient": appointment.Patient, "physiotherapist": appointment.Physiotherapist, "date": appointment.Date, "injury": appointment.Injury, "treatment": appointment.Treatment, "therapeutic": appointment.Therapeutic}
+		update := bson.M{"patient": appointment.Patient, "physiotherapist": appointment.Physiotherapist, "date": appointment.Date, "injury": appointment.Injury, "treatment": appointment.Treatment, "therapeuticExercise": appointment.TherapeuticExercise}
 		result, err := appointmentCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
@@ -179,3 +203,21 @@ func GetAllAppointments() gin.HandlerFunc {
 		)
 	}
 }
+
+// Create testing for CreateAAppointment function in appointment_test.go
+// func TestCreateAAppointment(t *testing.T) {
+// 	//setup
+// 	gin.SetMode(gin.TestMode)
+// 	r := gin.Default()
+// 	r.POST("/api/v1/appointment", CreateAAppointment())
+
+// 	//create a new appointment
+// 	w := httptest.NewRecorder()
+// 	req, _ := http.NewRequest("POST", "/api/v1/appointment", strings.NewReader(`{"patient":"5f8a8d1c2c9d440000c0b7f7","physiotherapist":"5f8a8d1c2c9d440000c0b7f7","date":"2020-10-19T00:00:00Z","injury":"5f8a8d1c2c9d440000c0b7f7","treatment":"5f8a8d1c2c9d440000c0b7f7","therapeuticExercise":"5f8a8d1c2c9d440000c0b7f7"}`))
+// 	r.ServeHTTP(w, req)
+
+// 	//assertions
+// 	assert.Equal(t, http.StatusOK, w.Code)
+// 	assert.Equal(t, "application/json; charset=utf-8", w.Header().Get("Content-Type"))
+// 	assert.Equal(t, `{"status":200,"message":"success","data":{"data":{"id":"5f8a8d1c2c9d440000c0b7f7","patient":"5f8a8d1c2c9d440000c0b7f7","physiotherapist":"5f8a8d1c2c9d440000c0b7f7","date":"2020-10-19T00:00:00Z","injury":"5f8a8d1c2c9d440000c0b7f7","treatment":"5f8a8d1c2c9d440000c0b7f7","therapeuticExercise":"5f8a8d1c2c9d440000c0b7f7"}}}`, w.Body.String())
+// }
