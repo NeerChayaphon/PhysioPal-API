@@ -26,13 +26,13 @@ func CreateTherapeuticExercise() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&therapeuticExercise); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&therapeuticExercise); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 
@@ -51,11 +51,11 @@ func CreateTherapeuticExercise() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: result})
 	}
 }
 
@@ -70,11 +70,11 @@ func GetATherapeuticExercise() gin.HandlerFunc {
 
 		err := therapeuticExerciseCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&therapeuticExercise)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": therapeuticExercise}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: therapeuticExercise})
 	}
 }
 
@@ -89,13 +89,13 @@ func EditATherapeuticExercise() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&therapeuticExercise); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&therapeuticExercise); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 
@@ -103,7 +103,7 @@ func EditATherapeuticExercise() gin.HandlerFunc {
 		result, err := therapeuticExerciseCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -112,12 +112,12 @@ func EditATherapeuticExercise() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := therapeuticExerciseCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTherapeuticExercise)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTherapeuticExercise}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: updatedTherapeuticExercise})
 	}
 }
 
@@ -132,19 +132,19 @@ func DeleteATherapeuticExercise() gin.HandlerFunc {
 		result, err := therapeuticExerciseCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
 		if result.DeletedCount < 1 {
 			c.JSON(http.StatusNotFound,
-				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "TherapeuticExercise with specified ID not found!"}},
+				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: "TherapeuticExercise with specified ID not found!"},
 			)
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "TherapeuticExercise successfully deleted!"}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: "TherapeuticExercise successfully deleted!"},
 		)
 	}
 }
@@ -158,7 +158,7 @@ func GetAllTherapeuticExercises() gin.HandlerFunc {
 		results, err := therapeuticExerciseCollection.Find(ctx, bson.M{})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -167,14 +167,14 @@ func GetAllTherapeuticExercises() gin.HandlerFunc {
 		for results.Next(ctx) {
 			var singleTherapeuticExercise models.TherapeuticExercise
 			if err = results.Decode(&singleTherapeuticExercise); err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			}
 
 			therapeuticExercises = append(therapeuticExercises, singleTherapeuticExercise)
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": therapeuticExercises}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: therapeuticExercises},
 		)
 	}
 }

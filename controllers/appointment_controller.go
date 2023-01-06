@@ -26,13 +26,13 @@ func CreateAppointment() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&appointment); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&appointment); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 
@@ -44,7 +44,7 @@ func CreateAppointment() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
@@ -56,7 +56,7 @@ func CreateAppointment() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
@@ -76,11 +76,11 @@ func CreateAppointment() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: result})
 	}
 }
 
@@ -95,11 +95,11 @@ func GetAAppointment() gin.HandlerFunc {
 
 		err := appointmentCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&appointment)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": appointment}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: appointment})
 	}
 }
 
@@ -114,13 +114,13 @@ func EditAAppointment() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&appointment); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&appointment); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 
@@ -128,7 +128,7 @@ func EditAAppointment() gin.HandlerFunc {
 		result, err := appointmentCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -137,12 +137,12 @@ func EditAAppointment() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := appointmentCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedAppointment)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedAppointment}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: updatedAppointment})
 	}
 }
 
@@ -157,19 +157,19 @@ func DeleteAAppointment() gin.HandlerFunc {
 		result, err := appointmentCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
 		if result.DeletedCount < 1 {
 			c.JSON(http.StatusNotFound,
-				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Appointment with specified ID not found!"}},
+				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: "Appointment with specified ID not found!"},
 			)
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Appointment successfully deleted!"}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: "Appointment successfully deleted!"},
 		)
 	}
 }
@@ -183,7 +183,7 @@ func GetAllAppointments() gin.HandlerFunc {
 		results, err := appointmentCollection.Find(ctx, bson.M{})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -192,14 +192,14 @@ func GetAllAppointments() gin.HandlerFunc {
 		for results.Next(ctx) {
 			var singleAppointment models.Appointment
 			if err = results.Decode(&singleAppointment); err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			}
 
 			appointments = append(appointments, singleAppointment)
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": appointments}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: appointments},
 		)
 	}
 }

@@ -26,25 +26,26 @@ func CreatePhysiotherapist() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&physiotherapist); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&physiotherapist); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 
 		passwordHash, err := utils.HashPassword(physiotherapist.Password)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
 		newPhysiotherapist := models.Physiotherapist{
 			Id:       primitive.NewObjectID(),
 			Details:  physiotherapist.Details,
+			Email:    physiotherapist.Email,
 			Password: passwordHash,
 			Phone:    physiotherapist.Phone,
 			Photo:    physiotherapist.Photo,
@@ -56,11 +57,11 @@ func CreatePhysiotherapist() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: result})
 	}
 }
 
@@ -75,11 +76,11 @@ func GetAPhysiotherapist() gin.HandlerFunc {
 
 		err := physiotherapistCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&physiotherapist)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": physiotherapist}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: physiotherapist})
 	}
 }
 
@@ -94,26 +95,26 @@ func EditAPhysiotherapist() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&physiotherapist); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&physiotherapist); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 		passwordHash, err := utils.HashPassword(physiotherapist.Password)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
-		update := bson.M{"details": physiotherapist.Details, "password": passwordHash, "phone": physiotherapist.Phone, "photo": physiotherapist.Photo}
+		update := bson.M{"details": physiotherapist.Details, "email": physiotherapist.Email, "password": passwordHash, "phone": physiotherapist.Phone, "photo": physiotherapist.Photo}
 		result, err := physiotherapistCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -122,12 +123,12 @@ func EditAPhysiotherapist() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := physiotherapistCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedPhysiotherapist)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedPhysiotherapist}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: updatedPhysiotherapist})
 	}
 }
 
@@ -142,19 +143,19 @@ func DeleteAPhysiotherapist() gin.HandlerFunc {
 		result, err := physiotherapistCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
 		if result.DeletedCount < 1 {
 			c.JSON(http.StatusNotFound,
-				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Physiotherapist with specified ID not found!"}},
+				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: "Physiotherapist with specified ID not found!"},
 			)
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Physiotherapist successfully deleted!"}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: "Physiotherapist successfully deleted!"},
 		)
 	}
 }
@@ -168,7 +169,7 @@ func GetAllPhysiotherapists() gin.HandlerFunc {
 		results, err := physiotherapistCollection.Find(ctx, bson.M{})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -177,14 +178,14 @@ func GetAllPhysiotherapists() gin.HandlerFunc {
 		for results.Next(ctx) {
 			var singlePhysiotherapist models.Physiotherapist
 			if err = results.Decode(&singlePhysiotherapist); err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			}
 
 			physiotherapists = append(physiotherapists, singlePhysiotherapist)
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": physiotherapists}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: physiotherapists},
 		)
 	}
 }
