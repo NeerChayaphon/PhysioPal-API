@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/NeerChayaphon/PhysioPal-API/configs"
 	"github.com/NeerChayaphon/PhysioPal-API/routes"
+	"github.com/NeerChayaphon/PhysioPal-API/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 )
 
 func main() {
@@ -12,6 +14,14 @@ func main() {
 	//run database
 	configs.ConnectDB()
 
+	//run redis
+	client := redis.NewClient(&redis.Options{
+		Addr:     configs.EnvRedisURI(),
+		Password: configs.EnvRedisPassword(),
+	})
+
+	//middleware
+	router.Use(utils.CacheMiddleware(client))
 	//routes
 	routes.LoginRoutes(router)
 	routes.PatientRoute(router)
