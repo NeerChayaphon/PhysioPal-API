@@ -13,6 +13,7 @@ func main() {
 	configs.ConnectDB()
 
 	//routes
+	routes.LoginRoutes(router)
 	routes.PatientRoute(router)
 	routes.PhysiotherapistRoute(router)
 	routes.ExerciseRoute(router)

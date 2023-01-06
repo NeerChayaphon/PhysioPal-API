@@ -26,13 +26,13 @@ func CreateTelemedicine() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&telemedicine); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&telemedicine); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 
@@ -44,7 +44,7 @@ func CreateTelemedicine() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
@@ -56,7 +56,7 @@ func CreateTelemedicine() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
@@ -74,11 +74,11 @@ func CreateTelemedicine() gin.HandlerFunc {
 				responses.APIResponse{
 					Status:  http.StatusInternalServerError,
 					Message: "error",
-					Data:    map[string]interface{}{"data": err.Error()}})
+					Data:    err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusCreated, responses.APIResponse{Status: http.StatusCreated, Message: "success", Data: result})
 	}
 }
 
@@ -93,11 +93,11 @@ func GetATelemedicine() gin.HandlerFunc {
 
 		err := telemedicineCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&telemedicine)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": telemedicine}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: telemedicine})
 	}
 }
 
@@ -112,13 +112,13 @@ func EditATelemedicine() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&telemedicine); err != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: err.Error()})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := utils.Validate.Struct(&telemedicine); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
 
@@ -126,7 +126,7 @@ func EditATelemedicine() gin.HandlerFunc {
 		result, err := telemedicineCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -135,12 +135,12 @@ func EditATelemedicine() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := telemedicineCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTelemedicine)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTelemedicine}})
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: updatedTelemedicine})
 	}
 }
 
@@ -155,19 +155,19 @@ func DeleteATelemedicine() gin.HandlerFunc {
 		result, err := telemedicineCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
 		if result.DeletedCount < 1 {
 			c.JSON(http.StatusNotFound,
-				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Telemedicine with specified ID not found!"}},
+				responses.APIResponse{Status: http.StatusNotFound, Message: "error", Data: "Telemedicine with specified ID not found!"},
 			)
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Telemedicine successfully deleted!"}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: "Telemedicine successfully deleted!"},
 		)
 	}
 }
@@ -181,7 +181,7 @@ func GetAllTelemedicines() gin.HandlerFunc {
 		results, err := telemedicineCollection.Find(ctx, bson.M{})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
@@ -190,14 +190,14 @@ func GetAllTelemedicines() gin.HandlerFunc {
 		for results.Next(ctx) {
 			var singleTelemedicine models.Telemedicine
 			if err = results.Decode(&singleTelemedicine); err != nil {
-				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			}
 
 			telemedicines = append(telemedicines, singleTelemedicine)
 		}
 
 		c.JSON(http.StatusOK,
-			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": telemedicines}},
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: telemedicines},
 		)
 	}
 }

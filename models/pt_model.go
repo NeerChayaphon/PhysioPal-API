@@ -5,6 +5,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 type Physiotherapist struct {
 	Id       primitive.ObjectID    `bson:"_id" json:"_id,omitempty"`
 	Details  PTLanguageDescription `bson:"details,omitempty" validate:"required"`
+	Email    string                `json:"email,omitempty" validate:"required"`
 	Password string                `json:"password,omitempty" validate:"required"`
 	Phone    string                `json:"phone,omitempty" validate:"required"`
 	Photo    string                `json:"photo,omitempty" validate:"required"`
