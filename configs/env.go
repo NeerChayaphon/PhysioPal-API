@@ -7,13 +7,21 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func EnvMongoURI() string {
+func EnvMongoLocalURI() string {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
 	return os.Getenv("MONGODB_LOCAL_URI")
+}
+
+func EnvMongoStagingURI() string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	return os.Getenv("MONGODB_STAGING_URI")
 }
 
 func EnvRedisURI() string {
