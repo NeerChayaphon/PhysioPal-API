@@ -1,34 +1,29 @@
 name: Deploy to Azure
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
-
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
+    - uses: azure/docker-login@v1
       with:
-        go-version: 1.19
+        login-server: physiopalgo.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - name: Copy static template files
-      run: xcopy /i templates build\templates
+    - run: |
+        docker build -t physiopalgo.azurecr.io/myapp:${{ github.sha }} --build-arg MONGODB_STAGING_URI="${{ secrets.MONGODB_STAGING_URI }}" --build-arg REDIS_LOCAL_URI="${{ secrets.REDIS_LOCAL_URI }}" --build-arg REDIS_LOCAL_PASSWORD="${{ secrets.REDIS_LOCAL_PASSWORD }}" .
+        docker push physiopalgo.azurecr.io/myapp:${{ github.sha }}     
 
-    - name: Copy static public files
-      run: xcopy /i public build\public
-
-    - name: Build
-      run: go build -o build/go-app.exe -v
-
-    - name: Test
-      run: go test
-      
-    - name: Deploy to Azure
-      uses: Azure/webapps-deploy@v2
+    - uses: azure/webapps-deploy@v2
       with:
-        # Name of the Azure Web App
-        app-name: go-azure-appservice
-        # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
-        package: build/
-        publish-profile: ${{ secrets.azureWebAppPublishProfile }}
+        app-name: 'PhysioPal-API'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        images: 'physiopalgo.azurecr.io/myapp:${{ github.sha }}'
