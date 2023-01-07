@@ -20,6 +20,10 @@ func EnvMongoStagingURI() string {
 	return os.Getenv("MONGODB_STAGING_URI")
 }
 
+func EnvMongoProductionURI() string {
+	return os.Getenv("MONGODB_PRODUCTION_URI")
+}
+
 func EnvRedisURI() string {
 	return os.Getenv("REDIS_LOCAL_URI")
 }

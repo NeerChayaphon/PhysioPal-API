@@ -11,7 +11,7 @@ import (
 )
 
 func ConnectDB() *mongo.Client {
-	client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoStagingURI()))
+	client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoProductionURI()))
 	if err != nil {
 		log.Fatal(err)
 	}
