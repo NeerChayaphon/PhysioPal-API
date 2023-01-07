@@ -15,7 +15,7 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - run: |
-        docker build . -t mycontainer.azurecr.io/myapp:${{ github.sha }}
+        docker build . -t mycontainer.azurecr.io/myapp:${{ github.sha }} --build-arg MONGODB_STAGING_URI="${{ secrets.MONGODB_STAGING_URI }}" --build-arg REDIS_LOCAL_URI="${{ secrets.REDIS_LOCAL_URI }}" --build-arg REDIS_LOCAL_PASSWORD="${{ secrets.REDIS_LOCAL_PASSWORD }}"
         docker push mycontainer.azurecr.io/myapp:${{ github.sha }}     
 
     - uses: azure/webapps-deploy@v2
