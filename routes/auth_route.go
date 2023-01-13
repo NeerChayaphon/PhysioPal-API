@@ -9,4 +9,5 @@ import (
 func LoginRoutes(router *gin.Engine) {
 	router.POST("/patient/login", utils.PatientLogin())
 	router.POST("/physiotherapist/login", utils.PhysiotherapistLogin())
+	router.GET("/user/GetUserByJWT", utils.AuthMiddleware, utils.GetUserByJWT())
 }

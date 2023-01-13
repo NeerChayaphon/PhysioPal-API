@@ -11,6 +11,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -105,9 +106,10 @@ func PhysiotherapistLogin() gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"token": t,
-			"role":  "physiotherapist",
-			"id":    physiotherapist.Id,
+			"status": http.StatusOK,
+			"token":  t,
+			"role":   "physiotherapist",
+			"id":     physiotherapist.Id,
 		})
 	}
 }
@@ -145,4 +147,54 @@ func AuthMiddleware(c *gin.Context) {
 	c.Set("user_role", claims["role"])
 
 	c.Next()
+}
+
+func GetUserByJWT() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		// Get the user ID and role from the context
+		userId := c.MustGet("user_id").(string)
+		userRole := c.MustGet("user_role").(string)
+
+		if userRole == "patient" {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			var patient models.Patient
+			defer cancel()
+
+			objId, _ := primitive.ObjectIDFromHex(userId)
+			err := patientCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&patient)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{
+				"status":  http.StatusOK,
+				"message": "success",
+				"role":    userRole,
+				"data":    patient,
+			})
+		}
+
+		if userRole == "physiotherapist" {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			var physiotherapist models.Physiotherapist
+			defer cancel()
+
+			objId, _ := primitive.ObjectIDFromHex(userId)
+			err := physiotherapistCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&physiotherapist)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+				return
+			}
+
+			// c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: { role: user_role physiotherapist}})
+			c.JSON(http.StatusOK, gin.H{
+				"status":  http.StatusOK,
+				"message": "success",
+				"role":    userRole,
+				"data":    physiotherapist,
+			})
+		}
+
+	}
 }
