@@ -21,8 +21,13 @@ func main() {
 		Password: configs.EnvRedisPassword(),
 	})
 
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowCredentials = true
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+
 	//middleware
-	router.Use(cors.Default())
+	router.Use(cors.New(corsConfig))
 	router.Use(utils.CacheMiddleware(client))
 	//routes
 	routes.LoginRoutes(router)
