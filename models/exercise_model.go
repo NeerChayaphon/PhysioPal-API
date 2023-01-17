@@ -50,10 +50,9 @@ type ExerciseSet struct {
 }
 
 type TherapeuticExercise struct {
-	Id            primitive.ObjectID  `bson:"_id" json:"_id,omitempty"`
-	AppointmentId primitive.ObjectID  `bson:"appointmentId" json:"appointmentId,omitempty"`
-	Details       LanguageDescription `bson:"details,omitempty" validate:"required"`
-	StartDate     time.Time           `bson:"startDate" validate:"required"`
-	EndDate       time.Time           `bson:"endDate" validate:"required"`
-	ExerciseSet   []ExerciseSet       `bson:"exerciseSet" validate:"required"`
+	Id          primitive.ObjectID  `bson:"_id" json:"_id,omitempty"`
+	Details     LanguageDescription `bson:"details,omitempty" validate:"required"`
+	StartDate   time.Time           `bson:"startDate" validate:"required"`
+	EndDate     time.Time           `bson:"endDate" validate:"required"`
+	ExerciseSet []ExerciseSet       `bson:"exerciseSet" validate:"required"`
 }

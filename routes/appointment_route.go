@@ -12,4 +12,7 @@ func AppointmentRoute(router *gin.Engine) {
 	router.PUT("/appointment/:appointmentId", utils.AuthMiddleware, controllers.EditAAppointment())
 	router.DELETE("/appointment/:appointmentId", utils.AuthMiddleware, controllers.DeleteAAppointment())
 	router.GET("/appointments", utils.AuthMiddleware, controllers.GetAllAppointments())
+
+	router.GET("/appointments/patient/:patientId", utils.AuthMiddleware, controllers.GetAppointmentsByPatient())
+	router.GET("/appointments/physiotherapist/:physiotherapistId", utils.AuthMiddleware, controllers.GetAppointmentsByPhysiotherapist())
 }

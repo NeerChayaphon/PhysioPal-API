@@ -204,20 +204,68 @@ func GetAllAppointments() gin.HandlerFunc {
 	}
 }
 
-// Create testing for CreateAAppointment function in appointment_test.go
-// func TestCreateAAppointment(t *testing.T) {
-// 	//setup
-// 	gin.SetMode(gin.TestMode)
-// 	r := gin.Default()
-// 	r.POST("/api/v1/appointment", CreateAAppointment())
+// Get appointment by physiotherapist ID
+func GetAppointmentsByPhysiotherapist() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		physiotherapistId := c.Param("physiotherapistId")
+		var appointments []models.Appointment
+		defer cancel()
 
-// 	//create a new appointment
-// 	w := httptest.NewRecorder()
-// 	req, _ := http.NewRequest("POST", "/api/v1/appointment", strings.NewReader(`{"patient":"5f8a8d1c2c9d440000c0b7f7","physiotherapist":"5f8a8d1c2c9d440000c0b7f7","date":"2020-10-19T00:00:00Z","injury":"5f8a8d1c2c9d440000c0b7f7","treatment":"5f8a8d1c2c9d440000c0b7f7","therapeuticExercise":"5f8a8d1c2c9d440000c0b7f7"}`))
-// 	r.ServeHTTP(w, req)
+		objId, _ := primitive.ObjectIDFromHex(physiotherapistId)
 
-// 	//assertions
-// 	assert.Equal(t, http.StatusOK, w.Code)
-// 	assert.Equal(t, "application/json; charset=utf-8", w.Header().Get("Content-Type"))
-// 	assert.Equal(t, `{"status":200,"message":"success","data":{"data":{"id":"5f8a8d1c2c9d440000c0b7f7","patient":"5f8a8d1c2c9d440000c0b7f7","physiotherapist":"5f8a8d1c2c9d440000c0b7f7","date":"2020-10-19T00:00:00Z","injury":"5f8a8d1c2c9d440000c0b7f7","treatment":"5f8a8d1c2c9d440000c0b7f7","therapeuticExercise":"5f8a8d1c2c9d440000c0b7f7"}}}`, w.Body.String())
-// }
+		results, err := appointmentCollection.Find(ctx, bson.M{"physiotherapist": objId})
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+			return
+		}
+
+		//reading from the db in an optimal way
+		defer results.Close(ctx)
+		for results.Next(ctx) {
+			var singleAppointment models.Appointment
+			if err = results.Decode(&singleAppointment); err != nil {
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+			}
+
+			appointments = append(appointments, singleAppointment)
+		}
+
+		c.JSON(http.StatusOK,
+			responses.APIResponse{Status: http.StatusOK, Message: "success", Data: appointments},
+		)
+	}
+}
+
+// Get appointment by patient ID
+func GetAppointmentsByPatient() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		patientId := c.Param("patientId")
+		var appointments []models.Appointment
+		defer cancel()
+
+		objId, _ := primitive.ObjectIDFromHex(patientId)
+
+		results, err := appointmentCollection.Find(ctx, bson.M{"patient": objId})
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+			return
+		}
+
+		//reading from the db in an optimal way
+		defer results.Close(ctx)
+		for results.Next(ctx) {
+			var singleAppointment models.Appointment
+			if err = results.Decode(&singleAppointment); err != nil {
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+			}
+
+			appointments = append(appointments, singleAppointment)
+		}
+
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: appointments})
+	}
+}
