@@ -3,6 +3,7 @@ BINARY_NAME=physiopal
 
 build:
 	docker build -t physiopal \
+	--build-arg MONGODB_LOCAL_URI="${MONGODB_LOCAL_URI}" \
 	--build-arg MONGODB_STAGING_URI="${MONGODB_STAGING_URI}" \
 	--build-arg REDIS_LOCAL_URI="${REDIS_LOCAL_URI}" \
 	--build-arg REDIS_LOCAL_PASSWORD="${REDIS_LOCAL_PASSWORD}" .

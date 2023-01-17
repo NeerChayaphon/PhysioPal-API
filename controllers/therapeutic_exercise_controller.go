@@ -37,12 +37,11 @@ func CreateTherapeuticExercise() gin.HandlerFunc {
 		}
 
 		newTherapeuticExercise := models.TherapeuticExercise{
-			Id:            primitive.NewObjectID(),
-			AppointmentId: therapeuticExercise.AppointmentId,
-			Details:       therapeuticExercise.Details,
-			StartDate:     therapeuticExercise.StartDate,
-			EndDate:       therapeuticExercise.EndDate,
-			ExerciseSet:   therapeuticExercise.ExerciseSet,
+			Id:          primitive.NewObjectID(),
+			Details:     therapeuticExercise.Details,
+			StartDate:   therapeuticExercise.StartDate,
+			EndDate:     therapeuticExercise.EndDate,
+			ExerciseSet: therapeuticExercise.ExerciseSet,
 		}
 
 		result, err := therapeuticExerciseCollection.InsertOne(ctx, newTherapeuticExercise)
