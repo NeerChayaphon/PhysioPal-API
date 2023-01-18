@@ -1,26 +1,26 @@
 name: Deploy to Azure
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - uses: azure/docker-login@v1
-      with:
-        login-server: physiopalgo.azurecr.io
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: physiopalgo.azurecr.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - run: |
-        docker build -t physiopalgo.azurecr.io/myapp:${{ github.sha }} --build-arg MONGODB_PRODUCTION_URI="${{ secrets.MONGODB_PRODUCTION_URI }}" --build-arg REDIS_LOCAL_URI="${{ secrets.REDIS_LOCAL_URI }}" --build-arg REDIS_LOCAL_PASSWORD="${{ secrets.REDIS_LOCAL_PASSWORD }}" .
-        docker push physiopalgo.azurecr.io/myapp:${{ github.sha }}     
+      - run: |
+          docker build -t physiopalgo.azurecr.io/myapp:${{ github.sha }} --build-arg MONGODB_STAGING_URI="${{ secrets.MONGODB_STAGING_URI }}" --build-arg MONGODB_PRODUCTION_URI="${{ secrets.MONGODB_PRODUCTION_URI }}" --build-arg REDIS_LOCAL_URI="${{ secrets.REDIS_LOCAL_URI }}" --build-arg REDIS_LOCAL_PASSWORD="${{ secrets.REDIS_LOCAL_PASSWORD }}" .
+          docker push physiopalgo.azurecr.io/myapp:${{ github.sha }}
 
     # - uses: azure/webapps-deploy@v2
     #   with:
