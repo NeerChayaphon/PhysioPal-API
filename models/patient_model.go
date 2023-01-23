@@ -7,14 +7,14 @@ type Patient struct {
 	Name              PatientName        `bson:"name,omitempty" validate:"required"`
 	Email             string             `bson:"email,omitempty" validate:"required,email"`
 	Password          string             `bson:"password,omitempty" validate:"required"`
-	Phone             string             `bson:"phone,omitempty" validate:"required"`
-	Photo             string             `bson:"photo,omitempty" validate:"required"`
+	Phone             string             `bson:"phone,omitempty"`
+	Photo             string             `bson:"photo,omitempty"`
 	Address           string             `bson:"specialization,omitempty" `
-	CongenitalDisease []string           `bson:"congenitalDisease"`
+	CongenitalDisease []string           `bson:"congenitalDisease,omitempty"`
 	ExerciseHistory   []ExerciseHistory  `bson:"exerciseHistory"`
 }
 
 type PatientName struct {
-	En_Name string `bson:"en_name,omitempty" validate:"required"`
-	Th_Name string `bson:"th_name,omitempty" validate:"required"`
+	En_Name string `bson:"en_name,omitempty"`
+	Th_Name string `bson:"th_name,omitempty"`
 }
