@@ -36,6 +36,14 @@ func CreatePatient() gin.HandlerFunc {
 			return
 		}
 
+		// find if the email is already registered
+		var existingPatient models.Patient
+		err := patientCollection.FindOne(ctx, bson.M{"email": patient.Email}).Decode(&existingPatient)
+		if err != mongo.ErrNoDocuments {
+			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: "email already registered"})
+			return
+		}
+
 		passwordHash, err := utils.HashPassword(patient.Password)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
