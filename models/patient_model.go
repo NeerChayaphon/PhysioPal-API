@@ -4,7 +4,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Patient struct {
 	Id                primitive.ObjectID `bson:"_id" json:"_id,omitempty"`
-	Name              PatientName        `bson:"name,omitempty" validate:"required"`
+	Name              string             `bson:"name,omitempty" validate:"required"` // ชื่อ-นามสกุล
 	Email             string             `bson:"email,omitempty" validate:"required,email"`
 	Password          string             `bson:"password,omitempty" validate:"required"`
 	Phone             string             `bson:"phone,omitempty"`
@@ -14,7 +14,7 @@ type Patient struct {
 	ExerciseHistory   []ExerciseHistory  `bson:"exerciseHistory"`
 }
 
-type PatientName struct {
-	En_Name string `bson:"en_name,omitempty"`
-	Th_Name string `bson:"th_name,omitempty"`
-}
+// type PatientName struct {
+// 	En_Name string `bson:"en_name,omitempty"`
+// 	Th_Name string `bson:"th_name,omitempty"`
+// }
