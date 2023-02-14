@@ -24,13 +24,13 @@ func EnvMongoProductionURI() string {
 	return os.Getenv("MONGODB_PRODUCTION_URI")
 }
 
-func EnvRedisURI() string {
-	return os.Getenv("REDIS_LOCAL_URI")
-}
+// func EnvRedisURI() string {
+// 	return os.Getenv("REDIS_LOCAL_URI")
+// }
 
-func EnvRedisPassword() string {
-	return os.Getenv("REDIS_LOCAL_PASSWORD")
-}
+// func EnvRedisPassword() string {
+// 	return os.Getenv("REDIS_LOCAL_PASSWORD")
+// }
 
 /* for.env file
 err := godotenv.Load()

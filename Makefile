@@ -24,3 +24,6 @@ build-s:
 
 run:
 	docker run -p 8080:8080 physiopal
+
+run-s:
+	env MONGODB_STAGING_URI="${MONGODB_STAGING_URI}" go run main.go
