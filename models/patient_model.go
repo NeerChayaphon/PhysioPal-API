@@ -14,7 +14,8 @@ type Patient struct {
 	ExerciseHistory   []ExerciseHistory  `bson:"exerciseHistory"`
 }
 
-// type PatientName struct {
-// 	En_Name string `bson:"en_name,omitempty"`
-// 	Th_Name string `bson:"th_name,omitempty"`
-// }
+type PatientName struct {
+	En_Name string `bson:"en_name,omitempty"`
+	Th_Name string `bson:"th_name,omitempty"`
+}
+
