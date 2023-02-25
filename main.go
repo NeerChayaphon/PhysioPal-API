@@ -3,10 +3,8 @@ package main
 import (
 	"github.com/NeerChayaphon/PhysioPal-API/configs"
 	"github.com/NeerChayaphon/PhysioPal-API/routes"
-	"github.com/NeerChayaphon/PhysioPal-API/utils"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis"
 )
 
 func main() {
@@ -16,10 +14,10 @@ func main() {
 	configs.ConnectDB()
 
 	//run redis
-	client := redis.NewClient(&redis.Options{
-		Addr:     configs.EnvRedisURI(),
-		Password: configs.EnvRedisPassword(),
-	})
+	// client := redis.NewClient(&redis.Options{
+	// 	Addr:     configs.EnvRedisURI(),
+	// 	Password: configs.EnvRedisPassword(),
+	// })
 
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
@@ -28,7 +26,7 @@ func main() {
 
 	//middleware
 	router.Use(cors.New(corsConfig))
-	router.Use(utils.CacheMiddleware(client))
+	// router.Use(utils.CacheMiddleware(client))
 	//routes
 	routes.LoginRoutes(router)
 	routes.PatientRoute(router)
