@@ -32,6 +32,7 @@ type Steps struct {
 	Details    LanguageDescription `bson:"details,omitempty" validate:"required"`
 	ModelClass string              `bson:"modelClass,omitempty" validate:"required"`
 	Model      string              `bson:"model,omitempty" validate:"required"`
+	ModelIndex int                 `bson:"modelIndex,omitempty" validate:"required"`
 }
 
 type GeneralExercise struct {
