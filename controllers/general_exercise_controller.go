@@ -178,3 +178,50 @@ func GetAllGeneralExercises() gin.HandlerFunc {
 		)
 	}
 }
+
+func GetAGeneralExerciseAndDetails() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		generalExerciseId := c.Param("generalExerciseId")
+		var generalExercise models.GeneralExercise
+		var generalExerciseJoined models.GeneralExerciseJoined
+		defer cancel()
+
+		objId, _ := primitive.ObjectIDFromHex(generalExerciseId)
+
+		err := generalExerciseCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&generalExercise)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+			return
+		}
+
+		//loop through the generalExercise.ExerciseSet and get the details of each exercise
+		exerciseSlice := []models.ExerciseSetJoined{}
+		for _, exercise := range generalExercise.ExerciseSet {
+			var exerciseDetails models.Exercise
+			var exerciseSetJoined models.ExerciseSetJoined
+			err := exerciseCollection.FindOne(ctx, bson.M{"_id": exercise.Exercise}).Decode(&exerciseDetails)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
+				return
+			}
+			// exerciseSlice = append(exerciseSlice, exerciseDetails)
+
+			exerciseSetJoined.Exercise = exerciseDetails
+			exerciseSetJoined.Reps = exercise.Reps
+			exerciseSetJoined.TimePeriod = exercise.TimePeriod
+
+			exerciseSlice = append(exerciseSlice, exerciseSetJoined)
+
+		}
+
+		generalExerciseJoined.Id = generalExercise.Id
+		generalExerciseJoined.Details = generalExercise.Details
+		generalExerciseJoined.MusculoskeltalTypes = generalExercise.MusculoskeltalTypes
+		generalExerciseJoined.Functional = generalExercise.Functional
+		generalExerciseJoined.Injury = generalExercise.Injury
+		generalExerciseJoined.ExerciseSet = exerciseSlice
+
+		c.JSON(http.StatusOK, responses.APIResponse{Status: http.StatusOK, Message: "success", Data: generalExerciseJoined})
+	}
+}
