@@ -25,7 +25,7 @@ type Exercise struct {
 	Details             LanguageDescription  `bson:"details,omitempty" validate:"required"`
 	MusculoskeltalTypes []primitive.ObjectID `bson:"musculoskeltalTypes" validate:"required"`
 	Steps               []Steps              `bson:"steps" validate:"required"`
-	Accuracy            int                  `bson:"accuracy,omitempty" validate:"required"`
+	Accuracy            float64              `bson:"accuracy,omitempty" validate:"required"`
 }
 
 type Steps struct {
