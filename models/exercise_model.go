@@ -59,3 +59,18 @@ type TherapeuticExercise struct {
 	EndDate     time.Time           `bson:"endDate" validate:"required"`
 	ExerciseSet []ExerciseSet       `bson:"exerciseSet" validate:"required"`
 }
+
+type GeneralExerciseJoined struct {
+	Id                  primitive.ObjectID    `bson:"_id" json:"_id,omitempty"`
+	Details             LanguageDescription   `bson:"details,omitempty" validate:"required"`
+	MusculoskeltalTypes primitive.ObjectID    `bson:"musculoskeltalTypes" validate:"required"`
+	Functional          *bool                 `bson:"functional" validate:"required"`
+	ExerciseSet         []ExerciseSetJoined   `bson:"exerciseSet" validate:"required"`
+	Injury              []LanguageDescription `bson:"injury"`
+}
+
+type ExerciseSetJoined struct {
+	Exercise   Exercise `bson:"exercise" json:"exercise,omitempty"`
+	TimePeriod int      `bson:"timePeriod,omitempty" validate:"required"`
+	Reps       int      `bson:"reps,omitempty" validate:"required"`
+}

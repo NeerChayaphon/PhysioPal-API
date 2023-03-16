@@ -12,4 +12,5 @@ func GeneralExerciseRoute(router *gin.Engine) {
 	router.PUT("/generalExercise/:generalExerciseId", utils.AuthMiddleware, controllers.EditAGeneralExercise())
 	router.DELETE("/generalExercise/:generalExerciseId", utils.AuthMiddleware, controllers.DeleteAGeneralExercise())
 	router.GET("/generalExercises", utils.AuthMiddleware, controllers.GetAllGeneralExercises())
+	router.GET("/generalExercise/join/:generalExerciseId", utils.AuthMiddleware, controllers.GetAGeneralExerciseAndDetails())
 }
