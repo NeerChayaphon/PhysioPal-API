@@ -41,6 +41,7 @@ func CreateExercise() gin.HandlerFunc {
 			Details:             exercise.Details,
 			MusculoskeltalTypes: exercise.MusculoskeltalTypes,
 			Steps:               exercise.Steps,
+			Accuracy:            exercise.Accuracy,
 		}
 
 		result, err := exerciseCollection.InsertOne(ctx, newExercise)
@@ -97,7 +98,7 @@ func EditAExercise() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"details": exercise.Details, "musculoskeltalTypes": exercise.MusculoskeltalTypes, "steps": exercise.Steps}
+		update := bson.M{"details": exercise.Details, "musculoskeltalTypes": exercise.MusculoskeltalTypes, "steps": exercise.Steps, "accuracy": exercise.Accuracy}
 		result, err := exerciseCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
