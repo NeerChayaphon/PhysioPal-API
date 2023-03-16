@@ -3,6 +3,7 @@ package models
 type Description struct {
 	Name        string `bson:"name,omitempty" validate:"required"`
 	Description string `bson:"description,omitempty" validate:"required"`
+	Audio       string `bson:"audio,omitempty"`
 }
 
 type LanguageDescription struct {
