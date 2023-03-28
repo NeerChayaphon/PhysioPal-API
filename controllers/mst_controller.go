@@ -37,8 +37,9 @@ func CreateMusculoskeltalType() gin.HandlerFunc {
 		}
 
 		newMusculoskeltalType := models.MusculoskeltalTypes{
-			Id:   primitive.NewObjectID(),
-			Type: musculoskeltalType.Type,
+			Id:    primitive.NewObjectID(),
+			Type:  musculoskeltalType.Type,
+			Image: musculoskeltalType.Image,
 		}
 
 		result, err := musculoskeltalTypesCollection.InsertOne(ctx, newMusculoskeltalType)
@@ -95,7 +96,7 @@ func EditAMusculoskeltalType() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"type": musculoskeltalType.Type}
+		update := bson.M{"type": musculoskeltalType.Type, "image": musculoskeltalType.Image}
 		result, err := musculoskeltalTypesCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
