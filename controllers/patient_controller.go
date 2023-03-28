@@ -227,8 +227,10 @@ func AddExerciseHistory() gin.HandlerFunc {
 		newExerciseHistory := models.ExerciseHistory{
 			Date:             time.Now(),
 			ExerciseType:     exerciseHistory.ExerciseType,
-			ExerciseSetName:  exerciseHistory.ExerciseSetName,
+			ExerciseSetId:    exerciseHistory.ExerciseSetId,
 			ExerciseRecorded: exerciseHistory.ExerciseRecorded,
+			IsComplete:       exerciseHistory.IsComplete,
+			ExerciseStatus:   exerciseHistory.ExerciseStatus,
 		}
 
 		err := patientCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&patient)
