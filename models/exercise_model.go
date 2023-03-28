@@ -9,9 +9,23 @@ import (
 type ExerciseHistory struct {
 	Date             time.Time          `bson:"date,omitempty"`
 	ExerciseType     string             `bson:"exerciseType,omitempty" validate:"required"`
-	ExerciseSetName  string             `bson:"exerciseSetName,omitempty" validate:"required"`
-	ExerciseRecorded []ExerciseRecorded `bson:"exerciseRecorded,omitempty" validate:"required"`
+	ExerciseSetId    primitive.ObjectID `bson:"exerciseSetId,omitempty" validate:"required"`
+	ExerciseRecorded []string           `bson:"exerciseRecorded,omitempty"`
+	IsComplete       bool               `bson:"isComplete,omitempty" validate:"required"`
+	ExerciseStatus   []ExerciseStatus   `bson:"exerciseStatus,omitempty"`
 }
+
+type ExerciseStatus struct {
+	ExerciseId primitive.ObjectID `bson:"exerciseId,omitempty" validate:"required"`
+	Status     string             `bson:"status,omitempty" validate:"required"`
+}
+
+// type ExerciseHistory struct {
+// 	Date             time.Time          `bson:"date,omitempty"`
+// 	ExerciseType     string             `bson:"exerciseType,omitempty" validate:"required"`
+// 	ExerciseSetName  string             `bson:"exerciseSetName,omitempty" validate:"required"`
+// 	ExerciseRecorded []ExerciseRecorded `bson:"exerciseRecorded,omitempty" validate:"required"`
+// }
 
 type ExerciseRecorded struct {
 	Exercise   primitive.ObjectID `bson:"exercise" json:"exercise,omitempty"`
