@@ -62,8 +62,8 @@ type GeneralExercise struct {
 
 type ExerciseSet struct {
 	Exercise   primitive.ObjectID `bson:"exercise" json:"exercise,omitempty"`
-	TimePeriod int                `bson:"timePeriod,omitempty" validate:"required"`
-	Reps       int                `bson:"reps,omitempty" validate:"required"`
+	TimePeriod int                `bson:"TimePeriod,omitempty" validate:"required"`
+	Reps       int                `bson:"Reps,omitempty" validate:"required"`
 }
 
 type TherapeuticExercise struct {
