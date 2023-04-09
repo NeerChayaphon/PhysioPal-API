@@ -100,16 +100,9 @@ func EditAPatient() gin.HandlerFunc {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		patientId := c.Param("patientId")
 		var patient models.Patient
-		var patientTemp models.Patient
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(patientId)
-
-		err := patientCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&patientTemp)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
-			return
-		}
 
 		//validate the request body
 		if err := c.BindJSON(&patient); err != nil {
@@ -122,21 +115,13 @@ func EditAPatient() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, responses.APIResponse{Status: http.StatusBadRequest, Message: "error", Data: validationErr.Error()})
 			return
 		}
-
-		var passwordHash string
-
-		if patient.Password != "" {
-			passwordHash, err = utils.HashPassword(patient.Password)
-		} else {
-			passwordHash = patientTemp.Password
-		}
-
+		passwordHash, err := utils.HashPassword(patient.Password)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.APIResponse{Status: http.StatusInternalServerError, Message: "error", Data: err.Error()})
 			return
 		}
 
-		update := bson.M{"name": patient.Name, "email": patient.Email, "password": passwordHash, "phone": patient.Phone, "photo": patient.Photo, "address": patient.Address, "congenitalDisease": patient.CongenitalDisease, "gender": patient.Gender}
+		update := bson.M{"name": patient.Name, "email": patient.Email, "password": passwordHash, "phone": patient.Phone, "photo": patient.Photo, "address": patient.Address, "congenitalDisease": patient.CongenitalDisease}
 		result, err := patientCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
