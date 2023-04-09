@@ -60,6 +60,7 @@ type GeneralExercise struct {
 	Injury              []LanguageDescription `bson:"injury"`
 }
 
+// Fix error
 type ExerciseSet struct {
 	Exercise   primitive.ObjectID `bson:"exercise" json:"exercise,omitempty"`
 	TimePeriod int                `bson:"TimePeriod,omitempty" validate:"required"`
